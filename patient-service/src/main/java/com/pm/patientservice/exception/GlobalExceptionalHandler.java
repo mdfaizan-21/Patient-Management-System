@@ -2,6 +2,8 @@ package com.pm.patientservice.exception;
 
 import com.pm.patientservice.exception.custom.EmailAlreadyExistException;
 import com.pm.patientservice.exception.custom.InvalidDateOfBirth;
+import com.pm.patientservice.exception.custom.PatientNotFoundException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -43,7 +45,16 @@ public class GlobalExceptionalHandler {
     @ExceptionHandler(InvalidDateOfBirth.class)
     public ResponseEntity<Map<String, String>> handleInvalidDateOfBirth(InvalidDateOfBirth ex) {
         Map<String, String> errors = new HashMap<>();
+        log.warn(ex.getMessage());
         errors.put("dateOfBirth", ex.getMessage());
+        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+    }
+    
+    @ExceptionHandler(PatientNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handlePatientNotFoundException(PatientNotFoundException ex) {
+        Map<String, String> errors = new HashMap<>();
+        log.warn(ex.getMessage());
+        errors.put("patient", ex.getMessage());
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
 }
