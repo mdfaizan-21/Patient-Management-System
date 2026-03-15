@@ -1,0 +1,26 @@
+# Ignore build output
+target/
+
+# Ignore IDE files
+.idea/
+*.iml
+.vscode/
+.settings/
+.project
+.classpath
+
+# Ignore Git
+.git/
+.gitignore
+
+# Ignore Docker files
+Dockerfile
+docker-compose*.yml
+.dockerignore
+
+# Ignore logs
+*.log
+
+# Ignore OS files
+Thumbs.db
+.DS_Store

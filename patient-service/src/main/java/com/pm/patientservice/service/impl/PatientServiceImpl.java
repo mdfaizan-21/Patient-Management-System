@@ -6,6 +6,7 @@ import com.pm.patientservice.dto.UpdatePatientRequest;
 import com.pm.patientservice.exception.custom.EmailAlreadyExistException;
 import com.pm.patientservice.exception.custom.InvalidDateOfBirth;
 import com.pm.patientservice.exception.custom.PatientNotFoundException;
+import com.pm.patientservice.grpc.BillingServiceGrpcClient;
 import com.pm.patientservice.helper.PatientMapper;
 import com.pm.patientservice.model.Patient;
 import com.pm.patientservice.repository.PatientRepository;
@@ -20,8 +21,10 @@ import java.util.UUID;
 public class PatientServiceImpl implements PatientService {
 
     PatientRepository patientRepository;
-    public PatientServiceImpl(PatientRepository patientRepository) {
+    private final BillingServiceGrpcClient billingServiceGrpcClient;
+    public PatientServiceImpl(PatientRepository patientRepository, BillingServiceGrpcClient billingServiceGrpcClient) {
         this.patientRepository = patientRepository;
+        this.billingServiceGrpcClient = billingServiceGrpcClient;
     }
     @Override
     public List<PatientResponseDto> getAllPatients() {
@@ -32,6 +35,10 @@ public class PatientServiceImpl implements PatientService {
     public PatientResponseDto createPatient(PatientRequestDto patientRequestDto) {
         validatePatient(patientRequestDto);
         Patient patient = patientRepository.save(PatientMapper.mapToPatient(patientRequestDto));
+
+        //after the patient is created we are creating its billing account
+        billingServiceGrpcClient.createBillingAccount(patient.getId().toString(),patient.getName(),patient.getEmail());
+
         return PatientMapper.mapToDTO(patient);
     }
 
